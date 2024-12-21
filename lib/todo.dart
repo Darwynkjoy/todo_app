@@ -67,8 +67,8 @@ List <String> todoitems=[];
         child: Column(
           children: [
             TextField(
+              controller: taskContoller,
               decoration: InputDecoration(
-                
                 labelText: "Enter task",
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
               ),  
@@ -81,17 +81,19 @@ List <String> todoitems=[];
                 itemBuilder: (context,index){
                   return ListTile(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                    title: Text("dara",style: TextStyle(fontSize: 18,color: const Color.fromARGB(255, 0, 0, 0)),),
+                    title: Text(todoitems[index],style: TextStyle(fontSize: 18,color: const Color.fromARGB(255, 0, 0, 0)),),
                     tileColor:const Color.fromARGB(255, 231, 231, 231),
                     trailing: GestureDetector(
-                      onTap: () => _removeTodoItem,
+                      onTap: () {
+                        _removeTodoItem(index);
+                      },
                       child: Icon(Icons.delete,color: const Color.fromARGB(255, 248, 201, 60))),
                   );
                 },
                 separatorBuilder: (context,index){
                   return SizedBox(height: 15,);
                 },
-                itemCount: box.length)),
+                itemCount: todoitems.length)),
           ],
         ),
       ),
