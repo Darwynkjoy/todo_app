@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
@@ -15,8 +14,24 @@ late Box box;
 List <String> todoitems=[];
 
   @override
+  void initState(){
+    super.initState();
+    openbox();
+  }
+
+  openbox()async{
+    box=await Hive.openBox("todobox");
+    loadTodoItems();
+  }
+
   void loadTodoItems()async{
-    
+    List<String>? task=box.get("todoitem")?.cast<String>();
+    print("tasks loaded:$task");
+    if(task !=null){
+      setState(() {
+        todoitems=task;
+      });
+    }
   }
 
     void saveTodoItems()async{
@@ -31,6 +46,13 @@ List <String> todoitems=[];
     }
     saveTodoItems();
     taskContoller.clear();
+  }
+
+  void _removeTodoItem(int index){
+    setState(() {
+      todoitems.removeAt(index);
+    });
+    saveTodoItems();
   }
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,9 +81,11 @@ List <String> todoitems=[];
                 itemBuilder: (context,index){
                   return ListTile(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                    title: Text(box.get("task"),style: TextStyle(fontSize: 18,color: const Color.fromARGB(255, 0, 0, 0)),),
+                    title: Text("dara",style: TextStyle(fontSize: 18,color: const Color.fromARGB(255, 0, 0, 0)),),
                     tileColor:const Color.fromARGB(255, 231, 231, 231),
-                    trailing: Icon(Icons.delete,color: const Color.fromARGB(255, 248, 201, 60)),
+                    trailing: GestureDetector(
+                      onTap: () => _removeTodoItem,
+                      child: Icon(Icons.delete,color: const Color.fromARGB(255, 248, 201, 60))),
                   );
                 },
                 separatorBuilder: (context,index){
@@ -75,7 +99,7 @@ List <String> todoitems=[];
         child: FloatingActionButton(
           backgroundColor: Colors.amber,
           onPressed: (){
-            box.put("task", taskContoller);
+            addTodoItems(taskContoller.text);
           },child: Text("+",style: TextStyle(fontSize: 30,color: Colors.white),),)),
     );
   }
